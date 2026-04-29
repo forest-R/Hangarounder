@@ -63,9 +63,12 @@ export default function CalendarPage({
   return (
     <div className="flex flex-col pb-4">
       <div className="flex items-center justify-between px-5 pt-6 pb-4">
-        <h1 className="text-xl font-medium text-forest-800">
-          {format(month, "yyyy년 M월", { locale: ko })}
-        </h1>
+        <div>
+  <p className="text-xs font-medium text-forest-600 tracking-[0.3em] mb-0.5">C A L E N D A R</p>
+  <h1 className="text-xl font-medium text-forest-800">
+    {format(month, "yyyy년 M월", { locale: ko })}
+  </h1>
+</div>
         <div className="flex gap-1">
           <button onClick={() => setMonth((m) => subMonths(m, 1))}
             className="w-8 h-8 flex items-center justify-center rounded-full text-forest-600 active:bg-white">‹</button>
