@@ -21,6 +21,7 @@ export default function RecordPage({
   categories: EquipmentCategory[];
   items: EquipmentItem[];
   initialDate: string | null;
+  initialMemoDate: string | null;
   user: User;
 }) {
   const today = format(new Date(), "yyyy-MM-dd");
@@ -36,7 +37,7 @@ export default function RecordPage({
   const [memos, setMemos] = useState<Record<string, string>>({});
   const [checkedItems, setCheckedItems] = useState<string[]>([]);
   const [gearOpen, setGearOpen] = useState(true);
-  const [activeMemoDt, setActiveMemoDt] = useState(dateId);
+  const [activeMemoDt, setActiveMemoDt] = useState(initialMemoDate ?? dateId);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState("");
 
