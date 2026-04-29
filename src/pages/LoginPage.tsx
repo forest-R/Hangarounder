@@ -6,7 +6,11 @@ export default function LoginPage() {
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-forest-50 gap-8 px-8">
       <div className="text-center">
-        <div className="text-7xl mb-5">⛺</div>
+        <img
+          src="/icons/icon-512.png"
+          alt="Hangarounder"
+          className="w-40 h-40 mx-auto mb-4 object-contain"
+        />
         <h1 className="text-3xl font-medium text-forest-800 tracking-tight">Hangarounder</h1>
         <p className="text-forest-600 mt-2 text-sm">포레스트 & 플로우 기록지</p>
       </div>
