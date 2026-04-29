@@ -4,7 +4,7 @@ export default {
     extend: {
       colors: {
         forest: {
-          50:  "#ebebeb",
+          50:  "#ededed",
           100: "#EAF3DE",
           200: "#C0DD97",
           400: "#97C459",
