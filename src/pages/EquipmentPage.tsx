@@ -48,7 +48,8 @@ export default function EquipmentPage({
           onChange={(e) => setNewCat(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && addCategory()}
           placeholder="새 카테고리"
-          className="flex-1 border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none placeholder-gray-300 bg-white"
+          style={{ fontSize: "13px" }}
+          className="flex-1 border border-gray-200 rounded-xl px-3 py-2 outline-none placeholder-gray-300 bg-white text-gray-700"
         />
         <button
           onClick={addCategory}
@@ -64,10 +65,11 @@ export default function EquipmentPage({
           return (
             <div key={cat.id} className="bg-white rounded-2xl p-4 border border-gray-100">
               <div className="flex items-center justify-between mb-3">
-                <p className="text-sm font-medium text-forest-700">{cat.name}</p>
+                <p style={{ fontSize: "13px" }} className="font-medium text-forest-700">{cat.name}</p>
                 <button
                   onClick={() => deleteDoc(doc(db, "categories", cat.id))}
-                  className="text-gray-300 text-xs active:text-red-400"
+                  style={{ fontSize: "13px" }}
+                  className="text-gray-300 active:text-red-400"
                 >삭제</button>
               </div>
               <div className="flex flex-wrap gap-2 mb-3">
@@ -76,7 +78,7 @@ export default function EquipmentPage({
                     key={item.id}
                     className="flex items-center gap-1 bg-forest-50 px-3 py-1 rounded-full"
                   >
-                    <span className="text-xs text-forest-700">{item.name}</span>
+                    <span style={{ fontSize: "13px" }} className="text-forest-700">{item.name}</span>
                     <button
                       onClick={() => deleteDoc(doc(db, "items", item.id))}
                       className="text-gray-300 text-xs active:text-red-400 ml-1"
@@ -92,11 +94,13 @@ export default function EquipmentPage({
                   }
                   onKeyDown={(e) => e.key === "Enter" && addItem(cat.id)}
                   placeholder="장비 추가"
-                  className="flex-1 border border-gray-100 rounded-xl px-3 py-1.5 text-xs outline-none placeholder-gray-300 bg-forest-50"
+                  style={{ fontSize: "13px" }}
+                  className="flex-1 border border-gray-100 rounded-xl px-3 py-1.5 outline-none placeholder-gray-300 bg-forest-50 text-gray-700"
                 />
                 <button
                   onClick={() => addItem(cat.id)}
-                  className="text-forest-600 text-xs px-2 active:text-forest-800"
+                  style={{ fontSize: "13px" }}
+                  className="text-forest-600 px-2 active:text-forest-800"
                 >추가</button>
               </div>
             </div>
