@@ -6,7 +6,7 @@ export default function ProfilePage({ user }: { user: User }) {
   return (
     <div className="flex flex-col pb-6">
       <div className="px-5 pt-6 pb-4">
-        <h1 className="text-xl font-medium text-forest-800">프로필</h1>
+        <h1 className="text-xl font-medium text-forest-800">P R O F I L E</h1>
       </div>
       <div className="px-5 flex flex-col gap-3">
         <div className="bg-white rounded-2xl p-4 border border-gray-100 flex items-center gap-3">
