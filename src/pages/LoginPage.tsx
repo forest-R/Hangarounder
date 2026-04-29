@@ -16,7 +16,7 @@ export default function LoginPage() {
       </div>
       <button
         onClick={login}
-        className="w-full max-w-xs flex items-center justify-center gap-3 bg-white border border-gray-200 rounded-2xl px-6 py-3.5 text-sm font-medium text-gray-700 shadow-sm active:scale-95 transition-transform"
+        className="flex items-center justify-center gap-2 bg-white border border-gray-200 rounded-2xl px-5 py-2.5 text-xs font-medium text-gray-500 shadow-sm active:scale-95 transition-transform"
       >
         <img
           src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
