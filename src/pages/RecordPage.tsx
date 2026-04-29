@@ -6,14 +6,16 @@ import { User } from "firebase/auth";
 import { format, parseISO, eachDayOfInterval } from "date-fns";
 import { ko } from "date-fns/locale";
 
-const WEATHER_OPTIONS = ["☀️ 맑음", "⛅ 구름", "🌧 비", "❄️ 눈", "💨 바람"];
+const WEATHER_OPTIONS = [
+  { label: "맑음", emoji: "☀️" },
+  { label: "구름", emoji: "⛅" },
+  { label: "비", emoji: "🌧" },
+  { label: "눈", emoji: "❄️" },
+  { label: "바람", emoji: "💨" },
+];
 
 export default function RecordPage({
-  records,
-  categories,
-  items,
-  initialDate,
-  user,
+  records, categories, items, initialDate, user,
 }: {
   records: CampingRecord[];
   categories: EquipmentCategory[];
@@ -29,6 +31,8 @@ export default function RecordPage({
   const [location, setLocation] = useState("");
   const [endDate, setEndDate] = useState("");
   const [weather, setWeather] = useState("");
+  const [tempLow, setTempLow] = useState("");
+  const [tempHigh, setTempHigh] = useState("");
   const [memos, setMemos] = useState<Record<string, string>>({});
   const [checkedItems, setCheckedItems] = useState<string[]>([]);
   const [gearOpen, setGearOpen] = useState(true);
@@ -41,17 +45,15 @@ export default function RecordPage({
       setLocation(existing.location ?? "");
       setEndDate(existing.endDate ?? "");
       setWeather(existing.weather ?? "");
+      setTempLow(existing.tempLow?.toString() ?? "");
+      setTempHigh(existing.tempHigh?.toString() ?? "");
       setMemos(existing.memos ?? {});
       setCheckedItems(existing.checkedItems ?? []);
       setActiveMemoDt(existing.id);
     } else {
-      setTitle("");
-      setLocation("");
-      setEndDate("");
-      setWeather("");
-      setMemos({});
-      setCheckedItems([]);
-      setActiveMemoDt(dateId);
+      setTitle(""); setLocation(""); setEndDate(""); setWeather("");
+      setTempLow(""); setTempHigh("");
+      setMemos({}); setCheckedItems([]); setActiveMemoDt(dateId);
     }
   }, [dateId]);
 
@@ -65,11 +67,10 @@ export default function RecordPage({
   const save = async () => {
     setSaving(true);
     const data: Omit<CampingRecord, "id"> = {
-      title,
-      location,
-      weather,
-      memos,
-      checkedItems,
+      title, location, weather,
+      ...(tempLow !== "" ? { tempLow: Number(tempLow) } : {}),
+      ...(tempHigh !== "" ? { tempHigh: Number(tempHigh) } : {}),
+      memos, checkedItems,
       createdAt: existing?.createdAt ?? Date.now(),
       ...(endDate && endDate > dateId ? { endDate } : {}),
     };
@@ -81,12 +82,9 @@ export default function RecordPage({
     if (!existing) return;
     if (!confirm("이 기록을 삭제할까요?")) return;
     await deleteDoc(doc(db, "records", dateId));
-    setTitle("");
-    setLocation("");
-    setEndDate("");
-    setWeather("");
-    setMemos({});
-    setCheckedItems([]);
+    setTitle(""); setLocation(""); setEndDate(""); setWeather("");
+    setTempLow(""); setTempHigh("");
+    setMemos({}); setCheckedItems([]);
   };
 
   const toggleItem = (name: string) => {
@@ -122,9 +120,7 @@ export default function RecordPage({
             <span className="text-gray-600">{format(parseISO(dateId), "M월 d일 (eee)", { locale: ko })}</span>
             <span className="text-gray-300">–</span>
             <input
-              type="date"
-              value={endDate}
-              min={dateId}
+              type="date" value={endDate} min={dateId}
               onChange={(e) => { setEndDate(e.target.value); setActiveMemoDt(dateId); }}
               className="text-gray-500 bg-transparent border-none outline-none text-sm"
             />
@@ -138,30 +134,47 @@ export default function RecordPage({
         <div className="bg-white rounded-2xl p-4 border border-gray-100">
           <p className="text-xs text-forest-600 font-medium uppercase tracking-wide mb-2">장소</p>
           <input
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
+            value={location} onChange={(e) => setLocation(e.target.value)}
             placeholder="상세 주소나 사이트 번호"
             className="w-full text-sm text-gray-700 bg-transparent border-none outline-none placeholder-gray-300"
           />
         </div>
 
-        {/* 날씨 */}
+        {/* 날씨 + 기온 */}
         <div className="bg-white rounded-2xl p-4 border border-gray-100">
           <p className="text-xs text-forest-600 font-medium uppercase tracking-wide mb-2">날씨</p>
-          <div className="flex gap-2 flex-wrap">
+          <div className="flex gap-2 flex-wrap mb-3">
             {WEATHER_OPTIONS.map((w) => (
               <button
-                key={w}
-                onClick={() => setWeather(weather === w ? "" : w)}
+                key={w.label}
+                onClick={() => setWeather(weather === w.label ? "" : w.label)}
                 className={`px-3 py-1.5 rounded-full text-sm border transition-colors ${
-                  weather === w
+                  weather === w.label
                     ? "bg-forest-600 text-white border-forest-600"
                     : "border-gray-200 text-gray-500"
                 }`}
               >
-                {w}
+                {w.emoji} {w.label}
               </button>
             ))}
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-gray-400">최저</span>
+            <input
+              type="number" value={tempLow}
+              onChange={(e) => setTempLow(e.target.value)}
+              placeholder="0"
+              className="w-16 text-sm text-gray-700 border border-gray-200 rounded-xl px-2 py-1 outline-none text-center bg-forest-50"
+            />
+            <span className="text-xs text-gray-400">°C</span>
+            <span className="text-xs text-gray-400 ml-2">최고</span>
+            <input
+              type="number" value={tempHigh}
+              onChange={(e) => setTempHigh(e.target.value)}
+              placeholder="0"
+              className="w-16 text-sm text-gray-700 border border-gray-200 rounded-xl px-2 py-1 outline-none text-center bg-forest-50"
+            />
+            <span className="text-xs text-gray-400">°C</span>
           </div>
         </div>
 
@@ -187,9 +200,7 @@ export default function RecordPage({
           )}
           <textarea
             value={memos[activeMemoDt] ?? ""}
-            onChange={(e) =>
-              setMemos((prev) => ({ ...prev, [activeMemoDt]: e.target.value }))
-            }
+            onChange={(e) => setMemos((prev) => ({ ...prev, [activeMemoDt]: e.target.value }))}
             placeholder="오늘의 기록..."
             rows={4}
             className="w-full text-sm text-gray-700 bg-forest-50 rounded-xl px-3 py-2.5 border-none outline-none resize-none placeholder-gray-300"
@@ -246,8 +257,7 @@ export default function RecordPage({
         {/* 저장/삭제 */}
         <div className="flex gap-2 pt-1">
           <button
-            onClick={save}
-            disabled={saving}
+            onClick={save} disabled={saving}
             className="flex-1 bg-forest-600 text-white rounded-2xl py-3 text-sm font-medium active:bg-forest-800 transition-colors disabled:opacity-50"
           >
             {saving ? "저장 중..." : existing ? "수정 저장" : "기록 저장"}
