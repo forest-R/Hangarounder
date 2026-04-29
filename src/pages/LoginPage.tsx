@@ -8,7 +8,7 @@ export default function LoginPage() {
       <div className="text-center">
         <div className="text-7xl mb-5">⛺</div>
         <h1 className="text-3xl font-medium text-forest-800 tracking-tight">Hangarounder</h1>
-        <p className="text-forest-600 mt-2 text-sm">우리만의 캠핑 기록</p>
+        <p className="text-forest-600 mt-2 text-sm">포레스트 & 플로우 기록지</p>
       </div>
       <button
         onClick={login}
