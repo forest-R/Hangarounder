@@ -20,12 +20,15 @@ export default function Shell({
   return (
     <div className="flex flex-col h-dvh max-w-md mx-auto bg-forest-50">
       <main className="flex-1 overflow-y-auto">{children}</main>
-      <nav className="flex border-t border-gray-200 bg-white" style={{ paddingBottom: "env(safe-area-inset-bottom)" }}>
+      <nav
+        className="flex border-t border-gray-200 bg-white"
+        style={{ paddingBottom: "max(env(safe-area-inset-bottom), 12px)" }}
+      >
         {tabs.map((t) => (
           <button
             key={t.id}
             onClick={() => setTab(t.id)}
-            className={`flex-1 flex flex-col items-center gap-0.5 py-2 text-xs transition-colors ${
+            className={`flex-1 flex flex-col items-center gap-0.5 pt-2 text-xs transition-colors ${
               tab === t.id ? "text-forest-800" : "text-gray-400"
             }`}
           >
