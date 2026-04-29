@@ -71,16 +71,17 @@ export default function App() {
         <CalendarPage records={records} onSelectDate={openRecord} />
       )}
       {tab === "record" && (
-        <RecordPage
-          key={selectedRecordId}
-          records={records}
-          categories={categories}
-          items={items}
-          initialDate={selectedRecordId}
-          initialMemoDate={selectedMemoDate}
-          user={user}
-        />
-      )}
+       <RecordPage
+        key={selectedRecordId}
+        records={records}
+        categories={categories}
+        items={items}
+        initialDate={selectedRecordId}
+        initialMemoDate={selectedMemoDate}
+        user={user}
+        onSaved={() => setTab("calendar")}
+  />
+)}
       {tab === "equipment" && <EquipmentPage categories={categories} items={items} />}
       {tab === "ledger" && <LedgerPage entries={entries} records={records} />}
       {tab === "profile" && <ProfilePage user={user} />}
