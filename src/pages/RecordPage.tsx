@@ -38,6 +38,7 @@ export default function RecordPage({
   const [gearOpen, setGearOpen] = useState(true);
   const [activeMemoDt, setActiveMemoDt] = useState(dateId);
   const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState("");
 
   useEffect(() => {
     if (existing) {
@@ -66,25 +67,35 @@ export default function RecordPage({
 
   const save = async () => {
     setSaving(true);
-    const data: Omit<CampingRecord, "id"> = {
-      title, location, weather,
-      ...(tempLow !== "" ? { tempLow: Number(tempLow) } : {}),
-      ...(tempHigh !== "" ? { tempHigh: Number(tempHigh) } : {}),
-      memos, checkedItems,
-      createdAt: existing?.createdAt ?? Date.now(),
-      ...(endDate && endDate > dateId ? { endDate } : {}),
-    };
-    await setDoc(doc(db, "records", dateId), data);
-    setSaving(false);
+    setSaveError("");
+    try {
+      const data: Omit<CampingRecord, "id"> = {
+        title, location, weather,
+        ...(tempLow !== "" ? { tempLow: Number(tempLow) } : {}),
+        ...(tempHigh !== "" ? { tempHigh: Number(tempHigh) } : {}),
+        memos, checkedItems,
+        createdAt: existing?.createdAt ?? Date.now(),
+        ...(endDate && endDate > dateId ? { endDate } : {}),
+      };
+      await setDoc(doc(db, "records", dateId), data);
+    } catch (e: any) {
+      setSaveError(e.message ?? "저장 실패");
+    } finally {
+      setSaving(false);
+    }
   };
 
   const deleteRecord = async () => {
     if (!existing) return;
     if (!confirm("이 기록을 삭제할까요?")) return;
-    await deleteDoc(doc(db, "records", dateId));
-    setTitle(""); setLocation(""); setEndDate(""); setWeather("");
-    setTempLow(""); setTempHigh("");
-    setMemos({}); setCheckedItems([]);
+    try {
+      await deleteDoc(doc(db, "records", dateId));
+      setTitle(""); setLocation(""); setEndDate(""); setWeather("");
+      setTempLow(""); setTempHigh("");
+      setMemos({}); setCheckedItems([]);
+    } catch (e: any) {
+      alert("삭제 실패: " + e.message);
+    }
   };
 
   const toggleItem = (name: string) => {
@@ -136,7 +147,8 @@ export default function RecordPage({
           <input
             value={location} onChange={(e) => setLocation(e.target.value)}
             placeholder="상세 주소나 사이트 번호"
-            className="w-full text-sm text-gray-700 bg-transparent border-none outline-none placeholder-gray-300"
+            style={{ fontSize: "13px" }}
+            className="w-full text-gray-700 bg-transparent border-none outline-none placeholder-gray-300"
           />
         </div>
 
@@ -164,7 +176,8 @@ export default function RecordPage({
               type="number" value={tempLow}
               onChange={(e) => setTempLow(e.target.value)}
               placeholder="0"
-              className="w-16 text-sm text-gray-700 border border-gray-200 rounded-xl px-2 py-1 outline-none text-center bg-forest-50"
+              style={{ fontSize: "13px" }}
+              className="w-16 text-gray-700 border border-gray-200 rounded-xl px-2 py-1 outline-none text-center bg-forest-50"
             />
             <span className="text-xs text-gray-400">°C</span>
             <span className="text-xs text-gray-400 ml-2">최고</span>
@@ -172,7 +185,8 @@ export default function RecordPage({
               type="number" value={tempHigh}
               onChange={(e) => setTempHigh(e.target.value)}
               placeholder="0"
-              className="w-16 text-sm text-gray-700 border border-gray-200 rounded-xl px-2 py-1 outline-none text-center bg-forest-50"
+              style={{ fontSize: "13px" }}
+              className="w-16 text-gray-700 border border-gray-200 rounded-xl px-2 py-1 outline-none text-center bg-forest-50"
             />
             <span className="text-xs text-gray-400">°C</span>
           </div>
@@ -203,7 +217,8 @@ export default function RecordPage({
             onChange={(e) => setMemos((prev) => ({ ...prev, [activeMemoDt]: e.target.value }))}
             placeholder="오늘의 기록..."
             rows={4}
-            className="w-full text-sm text-gray-700 bg-forest-50 rounded-xl px-3 py-2.5 border-none outline-none resize-none placeholder-gray-300"
+            style={{ fontSize: "13px" }}
+            className="w-full text-gray-700 bg-forest-50 rounded-xl px-3 py-2.5 border-none outline-none resize-none placeholder-gray-300"
           />
         </div>
 
@@ -253,6 +268,11 @@ export default function RecordPage({
             </div>
           )}
         </div>
+
+        {/* 에러 메시지 */}
+        {saveError && (
+          <p className="text-xs text-red-400 px-1">{saveError}</p>
+        )}
 
         {/* 저장/삭제 */}
         <div className="flex gap-2 pt-1">
