@@ -38,7 +38,7 @@ export default function EquipmentPage({
   return (
     <div className="flex flex-col pb-6">
       <div className="px-5 pt-6 pb-2">
-        <h1 className="text-xl font-medium text-forest-800">캠핑 장비 목록</h1>
+        <h1 className="text-xl font-medium text-forest-800">E Q U I P  L I S T</h1>
         <p className="text-sm text-gray-400 mt-1">카테고리별로 장비를 관리해요</p>
       </div>
 
