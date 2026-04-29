@@ -19,6 +19,7 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<Tab>("calendar");
   const [selectedRecordId, setSelectedRecordId] = useState<string | null>(null);
+  const [selectedMemoDate, setSelectedMemoDate] = useState<string | null>(null);
 
   const [records, setRecords] = useState<CampingRecord[]>([]);
   const [categories, setCategories] = useState<EquipmentCategory[]>([]);
@@ -26,10 +27,7 @@ export default function App() {
   const [entries, setEntries] = useState<LedgerEntry[]>([]);
 
   useEffect(() => {
-    return onAuthStateChanged(auth, (u) => {
-      setUser(u);
-      setLoading(false);
-    });
+    return onAuthStateChanged(auth, (u) => { setUser(u); setLoading(false); });
   }, []);
 
   useEffect(() => {
@@ -47,13 +45,11 @@ export default function App() {
     return () => unsubs.forEach((u) => u());
   }, [user]);
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-screen bg-forest-50">
-        <div className="text-forest-600 text-lg font-medium">Hangarounder</div>
-      </div>
-    );
-  }
+  if (loading) return (
+    <div className="flex items-center justify-center h-screen bg-forest-50">
+      <div className="text-forest-600 text-lg font-medium">Hangarounder</div>
+    </div>
+  );
 
   if (!user) return <LoginPage />;
 
@@ -65,6 +61,7 @@ export default function App() {
       return isWithinInterval(clickedDate, { start, end });
     });
     setSelectedRecordId(matchingRecord ? matchingRecord.id : date);
+    setSelectedMemoDate(date);
     setTab("record");
   };
 
@@ -80,18 +77,13 @@ export default function App() {
           categories={categories}
           items={items}
           initialDate={selectedRecordId}
+          initialMemoDate={selectedMemoDate}
           user={user}
         />
       )}
-      {tab === "equipment" && (
-        <EquipmentPage categories={categories} items={items} />
-      )}
-      {tab === "ledger" && (
-        <LedgerPage entries={entries} records={records} />
-      )}
-      {tab === "profile" && (
-        <ProfilePage user={user} />
-      )}
+      {tab === "equipment" && <EquipmentPage categories={categories} items={items} />}
+      {tab === "ledger" && <LedgerPage entries={entries} records={records} />}
+      {tab === "profile" && <ProfilePage user={user} />}
     </Shell>
   );
 }
