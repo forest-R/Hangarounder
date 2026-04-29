@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { onAuthStateChanged, User } from "firebase/auth";
 import { collection, onSnapshot, query } from "firebase/firestore";
+import { parseISO, isWithinInterval } from "date-fns";
 import { auth, db } from "./lib/firebase";
 import { CampingRecord, EquipmentCategory, EquipmentItem, LedgerEntry } from "./types";
 import Shell from "./components/Shell";
@@ -17,7 +18,7 @@ export default function App() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<Tab>("calendar");
-  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [selectedRecordId, setSelectedRecordId] = useState<string | null>(null);
 
   const [records, setRecords] = useState<CampingRecord[]>([]);
   const [categories, setCategories] = useState<EquipmentCategory[]>([]);
@@ -57,7 +58,13 @@ export default function App() {
   if (!user) return <LoginPage />;
 
   const openRecord = (date: string) => {
-    setSelectedDate(date);
+    const clickedDate = parseISO(date);
+    const matchingRecord = records.find((r) => {
+      const start = parseISO(r.id);
+      const end = r.endDate ? parseISO(r.endDate) : start;
+      return isWithinInterval(clickedDate, { start, end });
+    });
+    setSelectedRecordId(matchingRecord ? matchingRecord.id : date);
     setTab("record");
   };
 
@@ -68,10 +75,11 @@ export default function App() {
       )}
       {tab === "record" && (
         <RecordPage
+          key={selectedRecordId}
           records={records}
           categories={categories}
           items={items}
-          initialDate={selectedDate}
+          initialDate={selectedRecordId}
           user={user}
         />
       )}
