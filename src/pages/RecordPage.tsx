@@ -131,12 +131,13 @@ export default function RecordPage({
       )}
 
       <div className="px-5 pt-6 pb-3">
-        <input
-          type="date"
-          value={dateId}
-          onChange={(e) => setDateId(e.target.value)}
-          className="text-xs text-gray-400 bg-transparent border-none outline-none mb-1"
-        />
+        <p className="text-xs font-medium text-forest-600 tracking-[0.3em] mb-1">R E C O R D</p>
+<input
+  type="date"
+  value={dateId}
+  onChange={(e) => setDateId(e.target.value)}
+  className="text-xs text-gray-400 bg-transparent border-none outline-none mb-1"
+/>
         <input
           value={title}
           onChange={(e) => setTitle(e.target.value)}
