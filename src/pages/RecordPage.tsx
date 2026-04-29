@@ -15,7 +15,7 @@ const WEATHER_OPTIONS = [
 ];
 
 export default function RecordPage({
-  records, categories, items, initialDate, initialMemoDate, user,
+  records, categories, items, initialDate, initialMemoDate, user, onSaved,
 }: {
   records: CampingRecord[];
   categories: EquipmentCategory[];
@@ -23,6 +23,7 @@ export default function RecordPage({
   initialDate: string | null;
   initialMemoDate: string | null;
   user: User;
+  onSaved: () => void;
 }) {
   const today = format(new Date(), "yyyy-MM-dd");
   const [dateId, setDateId] = useState(initialDate ?? today);
@@ -40,6 +41,7 @@ export default function RecordPage({
   const [activeMemoDt, setActiveMemoDt] = useState(initialMemoDate ?? dateId);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState("");
+  const [showSuccess, setShowSuccess] = useState(false);
 
   useEffect(() => {
     if (existing) {
@@ -79,6 +81,7 @@ export default function RecordPage({
         ...(endDate && endDate > dateId ? { endDate } : {}),
       };
       await setDoc(doc(db, "records", dateId), data);
+      setShowSuccess(true);
     } catch (e: any) {
       setSaveError(e.message ?? "저장 실패");
     } finally {
@@ -94,6 +97,7 @@ export default function RecordPage({
       setTitle(""); setLocation(""); setEndDate(""); setWeather("");
       setTempLow(""); setTempHigh("");
       setMemos({}); setCheckedItems([]);
+      onSaved();
     } catch (e: any) {
       alert("삭제 실패: " + e.message);
     }
@@ -109,6 +113,23 @@ export default function RecordPage({
 
   return (
     <div className="flex flex-col pb-8">
+      {/* 저장 완료 모달 */}
+      {showSuccess && (
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+          <div className="absolute inset-0 bg-black/20" />
+          <div className="relative bg-white rounded-3xl px-8 py-8 flex flex-col items-center gap-4 shadow-xl mx-8">
+            <div className="text-4xl">⛺</div>
+            <p className="text-forest-800 font-medium text-lg">저장 완료!</p>
+            <button
+              onClick={onSaved}
+              className="bg-forest-600 text-white rounded-2xl px-8 py-2.5 text-sm font-medium active:bg-forest-800"
+            >
+              캘린더로 이동
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className="px-5 pt-6 pb-3">
         <input
           type="date"
