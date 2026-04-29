@@ -100,39 +100,38 @@ export default function CalendarPage({
           </div>
         ))}
         {days.map((day) => {
-          const dayRecords = getDayRecords(records, day);
-          const isToday = isSameDay(day, new Date());
-          const dateStr = format(day, "yyyy-MM-dd");
+  const dayRecords = getDayRecords(records, day);
+  const isToday = isSameDay(day, new Date());
+  const dateStr = format(day, "yyyy-MM-dd");
+  const slots = [dayRecords[0] ?? null, dayRecords[1] ?? null];
 
-          // 항상 2개 슬롯 유지
-          const slots = [dayRecords[0] ?? null, dayRecords[1] ?? null];
-
-          return (
-            <div
-              key={dateStr}
-              onClick={() => onSelectDate(dateStr)}
-              className="flex flex-col items-center py-2 cursor-pointer active:bg-white rounded-xl transition-colors"
-              style={{ minHeight: "56px" }}
-            >
-              <span
-                className={`text-sm w-7 h-7 flex items-center justify-center rounded-full font-medium ${
-                  isToday ? "bg-forest-600 text-white" : "text-gray-700"
-                }`}
-              >
-                {format(day, "d")}
-              </span>
-              <div className="flex flex-col gap-0.5 w-full px-1 mt-1">
-                {slots.map((r, idx) => (
-                  <div
-                    key={idx}
-                    className="h-1.5 rounded-full w-full"
-                    style={{ background: r ? colorMap.get(r.id) : "transparent" }}
-                  />
-                ))}
-              </div>
-            </div>
-          );
-        })}
+  return (
+    <div
+      key={dateStr}
+      className="flex flex-col items-center py-2 rounded-xl"
+      style={{ minHeight: "56px" }}
+    >
+      <span
+        onClick={() => onSelectDate(dayRecords[0] ? dayRecords[0].id : dateStr)}
+        className={`text-sm w-7 h-7 flex items-center justify-center rounded-full font-medium cursor-pointer active:opacity-70 ${
+          isToday ? "bg-forest-600 text-white" : "text-gray-700"
+        }`}
+      >
+        {format(day, "d")}
+      </span>
+      <div className="flex flex-col gap-0.5 w-full px-1 mt-1">
+        {slots.map((r, idx) => (
+          <div
+            key={idx}
+            onClick={() => r && onSelectDate(r.id)}
+            className="h-1.5 rounded-full w-full cursor-pointer active:opacity-70"
+            style={{ background: r ? colorMap.get(r.id) : "transparent" }}
+          />
+        ))}
+      </div>
+    </div>
+  );
+})}
       </div>
 
       {/* This month list */}
