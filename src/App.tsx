@@ -54,16 +54,28 @@ export default function App() {
   if (!user) return <LoginPage />;
 
   const openRecord = (date: string) => {
-    const clickedDate = parseISO(date);
-    const matchingRecord = records.find((r) => {
-      const start = parseISO(r.id);
-      const end = r.endDate ? parseISO(r.endDate) : start;
-      return isWithinInterval(clickedDate, { start, end });
-    });
-    setSelectedRecordId(matchingRecord ? matchingRecord.id : date);
+  const clickedDate = parseISO(date);
+  
+  // 1순위: 클릭한 날짜가 정확히 시작일인 레코드
+  const exactMatch = records.find((r) => r.id === date);
+  if (exactMatch) {
+    setSelectedRecordId(exactMatch.id);
     setSelectedMemoDate(date);
     setTab("record");
-  };
+    return;
+  }
+
+  // 2순위: 클릭한 날짜가 범위 안에 있는 레코드 (시작일 기준 정렬 후 가장 늦은 것)
+  const rangeMatches = records.filter((r) => {
+    const start = parseISO(r.id);
+    const end = r.endDate ? parseISO(r.endDate) : start;
+    return isWithinInterval(clickedDate, { start, end });
+  }).sort((a, b) => b.id.localeCompare(a.id)); // 시작일 늦은 것 우선
+
+  setSelectedRecordId(rangeMatches.length > 0 ? rangeMatches[0].id : date);
+  setSelectedMemoDate(date);
+  setTab("record");
+};
 
   return (
     <Shell tab={tab} setTab={setTab}>
