@@ -15,12 +15,12 @@ import {
 import { ko } from "date-fns/locale";
 
 const COLORS = [
-  "#C8E6C0", // 크리미 그린
-  "#B8D4E8", // 크리미 블루
-  "#F5C9A0", // 크리미 오렌지
-  "#D4BEE8", // 크리미 퍼플
-  "#F5C0C0", // 크리미 핑크
-  "#B8E8D4", // 크리미 민트
+  "#C8E6C0",
+  "#B8D4E8",
+  "#F5C9A0",
+  "#D4BEE8",
+  "#F5C0C0",
+  "#B8E8D4",
 ];
 
 function getDayRecords(records: CampingRecord[], date: Date): CampingRecord[] {
@@ -45,10 +45,12 @@ export default function CalendarPage({
   const days = eachDayOfInterval({ start: monthStart, end: monthEnd });
   const startPad = getDay(monthStart);
 
+  // 레코드 시작일 기준 정렬 후 색상 고정
+  const sortedRecords = [...records].sort((a, b) => a.id.localeCompare(b.id));
   const colorMap = new Map<string, string>();
-  records.forEach((r, i) => colorMap.set(r.id, COLORS[i % COLORS.length]));
+  sortedRecords.forEach((r, i) => colorMap.set(r.id, COLORS[i % COLORS.length]));
 
-  const thisMonthRecords = records.filter((r) => {
+  const thisMonthRecords = sortedRecords.filter((r) => {
     const start = parseISO(r.id);
     const end = r.endDate ? parseISO(r.endDate) : start;
     return (
@@ -60,35 +62,26 @@ export default function CalendarPage({
 
   return (
     <div className="flex flex-col pb-4">
-      {/* Header */}
       <div className="flex items-center justify-between px-5 pt-6 pb-4">
         <h1 className="text-xl font-medium text-forest-800">
           {format(month, "yyyy년 M월", { locale: ko })}
         </h1>
         <div className="flex gap-1">
-          <button
-            onClick={() => setMonth((m) => subMonths(m, 1))}
-            className="w-8 h-8 flex items-center justify-center rounded-full text-forest-600 active:bg-white"
-          >‹</button>
-          <button
-            onClick={() => setMonth(new Date())}
-            className="px-3 h-8 flex items-center justify-center rounded-full text-xs text-forest-600 border border-forest-200 active:bg-white"
-          >오늘</button>
-          <button
-            onClick={() => setMonth((m) => addMonths(m, 1))}
-            className="w-8 h-8 flex items-center justify-center rounded-full text-forest-600 active:bg-white"
-          >›</button>
+          <button onClick={() => setMonth((m) => subMonths(m, 1))}
+            className="w-8 h-8 flex items-center justify-center rounded-full text-forest-600 active:bg-white">‹</button>
+          <button onClick={() => setMonth(new Date())}
+            className="px-3 h-8 flex items-center justify-center rounded-full text-xs text-forest-600 border border-forest-200 active:bg-white">오늘</button>
+          <button onClick={() => setMonth((m) => addMonths(m, 1))}
+            className="w-8 h-8 flex items-center justify-center rounded-full text-forest-600 active:bg-white">›</button>
         </div>
       </div>
 
-      {/* DOW */}
       <div className="grid grid-cols-7 px-3">
         {["일","월","화","수","목","금","토"].map((d) => (
           <div key={d} className="text-center text-xs text-gray-400 py-1 font-medium">{d}</div>
         ))}
       </div>
 
-      {/* Days */}
       <div className="grid grid-cols-7 px-3">
         {Array.from({ length: startPad }).map((_, i) => (
           <div key={`pad-${i}`} className="flex flex-col items-center py-2" style={{ minHeight: "56px" }}>
@@ -100,63 +93,52 @@ export default function CalendarPage({
           </div>
         ))}
         {days.map((day) => {
-  const dayRecords = getDayRecords(records, day);
-  const isToday = isSameDay(day, new Date());
-  const dateStr = format(day, "yyyy-MM-dd");
-  const slots = [dayRecords[0] ?? null, dayRecords[1] ?? null];
+          const dayRecords = getDayRecords(sortedRecords, day);
+          const isToday = isSameDay(day, new Date());
+          const dateStr = format(day, "yyyy-MM-dd");
+          const slots = [dayRecords[0] ?? null, dayRecords[1] ?? null];
 
-  return (
-    <div
-      key={dateStr}
-      className="flex flex-col items-center py-2 rounded-xl"
-      style={{ minHeight: "56px" }}
-    >
-      <span
-        onClick={() => onSelectDate(dayRecords[0] ? dayRecords[0].id : dateStr)}
-        className={`text-sm w-7 h-7 flex items-center justify-center rounded-full font-medium cursor-pointer active:opacity-70 ${
-          isToday ? "bg-forest-600 text-white" : "text-gray-700"
-        }`}
-      >
-        {format(day, "d")}
-      </span>
-      <div className="flex flex-col gap-0.5 w-full px-1 mt-1">
-        {slots.map((r, idx) => (
-          <div
-            key={idx}
-            onClick={() => r && onSelectDate(r.id)}
-            className="h-1.5 rounded-full w-full cursor-pointer active:opacity-70"
-            style={{ background: r ? colorMap.get(r.id) : "transparent" }}
-          />
-        ))}
-      </div>
-    </div>
-  );
-})}
+          return (
+            <div key={dateStr} className="flex flex-col items-center py-2 rounded-xl" style={{ minHeight: "56px" }}>
+              <span
+                onClick={() => onSelectDate(dayRecords[0] ? dayRecords[0].id : dateStr)}
+                className={`text-sm w-7 h-7 flex items-center justify-center rounded-full font-medium cursor-pointer active:opacity-70 ${
+                  isToday ? "bg-forest-600 text-white" : "text-gray-700"
+                }`}
+              >
+                {format(day, "d")}
+              </span>
+              <div className="flex flex-col gap-0.5 w-full px-1 mt-1">
+                {slots.map((r, idx) => (
+                  <div
+                    key={idx}
+                    onClick={() => r && onSelectDate(r.id)}
+                    className="h-1.5 rounded-full w-full cursor-pointer active:opacity-70"
+                    style={{ background: r ? colorMap.get(r.id) : "transparent" }}
+                  />
+                ))}
+              </div>
+            </div>
+          );
+        })}
       </div>
 
-      {/* This month list */}
       {thisMonthRecords.length > 0 && (
         <div className="px-5 mt-4">
           <p className="text-xs text-gray-400 font-medium mb-2">이번 달 캠핑</p>
           <div className="flex flex-col gap-2">
             {thisMonthRecords.map((r) => {
               const nights = r.endDate
-                ? Math.round(
-                    (parseISO(r.endDate).getTime() - parseISO(r.id).getTime()) / 86400000
-                  )
+                ? Math.round((parseISO(r.endDate).getTime() - parseISO(r.id).getTime()) / 86400000)
                 : 0;
               const label = nights === 0 ? "당일" : `${nights}박 ${nights + 1}일`;
-              const color = colorMap.get(r.id);
               return (
                 <button
                   key={r.id}
                   onClick={() => onSelectDate(r.id)}
                   className="flex items-center gap-3 bg-white rounded-2xl px-4 py-3 border border-gray-100 active:bg-gray-50 text-left"
                 >
-                  <div
-                    className="w-2.5 h-2.5 rounded-full flex-shrink-0"
-                    style={{ background: color }}
-                  />
+                  <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: colorMap.get(r.id) }} />
                   <div>
                     <p className="text-sm font-medium text-gray-800">{r.title || "제목 없음"}</p>
                     <p className="text-xs text-gray-400 mt-0.5">
