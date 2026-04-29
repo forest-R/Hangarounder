@@ -133,7 +133,8 @@ export default function RecordPage({
             <input
               type="date" value={endDate} min={dateId}
               onChange={(e) => { setEndDate(e.target.value); setActiveMemoDt(dateId); }}
-              className="text-gray-500 bg-transparent border-none outline-none text-sm"
+              style={{ fontSize: "13px" }}
+              className="text-gray-500 bg-transparent border-none outline-none"
             />
             {endDate && (
               <button onClick={() => setEndDate("")} className="text-gray-300 text-xs">✕</button>
