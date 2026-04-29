@@ -4,6 +4,8 @@ export type CampingRecord = {
   title: string;
   location: string;
   weather?: string;
+  tempLow?: number;
+  tempHigh?: number;
   memos: Record<string, string>;
   checkedItems: string[];
   createdAt: number;
