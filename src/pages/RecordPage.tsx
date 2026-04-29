@@ -15,7 +15,7 @@ const WEATHER_OPTIONS = [
 ];
 
 export default function RecordPage({
-  records, categories, items, initialDate, user,
+  records, categories, items, initialDate, initialMemoDate, user,
 }: {
   records: CampingRecord[];
   categories: EquipmentCategory[];
@@ -51,11 +51,11 @@ export default function RecordPage({
       setTempHigh(existing.tempHigh?.toString() ?? "");
       setMemos(existing.memos ?? {});
       setCheckedItems(existing.checkedItems ?? []);
-      setActiveMemoDt(existing.id);
+      setActiveMemoDt(initialMemoDate ?? existing.id);
     } else {
       setTitle(""); setLocation(""); setEndDate(""); setWeather("");
       setTempLow(""); setTempHigh("");
-      setMemos({}); setCheckedItems([]); setActiveMemoDt(dateId);
+      setMemos({}); setCheckedItems([]); setActiveMemoDt(initialMemoDate ?? dateId);
     }
   }, [dateId]);
 
@@ -128,8 +128,10 @@ export default function RecordPage({
         {/* 기간 */}
         <div className="bg-white rounded-2xl p-4 border border-gray-100">
           <p className="text-xs text-forest-600 font-medium uppercase tracking-wide mb-2">기간</p>
-          <div className="flex items-center gap-2 text-sm flex-wrap">
-            <span className="text-gray-600">{format(parseISO(dateId), "M월 d일 (eee)", { locale: ko })}</span>
+          <div className="flex items-center gap-2 flex-wrap">
+            <span style={{ fontSize: "13px" }} className="text-gray-600">
+              {format(parseISO(dateId), "M월 d일 (eee)", { locale: ko })}
+            </span>
             <span className="text-gray-300">–</span>
             <input
               type="date" value={endDate} min={dateId}
@@ -271,12 +273,10 @@ export default function RecordPage({
           )}
         </div>
 
-        {/* 에러 메시지 */}
         {saveError && (
           <p className="text-xs text-red-400 px-1">{saveError}</p>
         )}
 
-        {/* 저장/삭제 */}
         <div className="flex gap-2 pt-1">
           <button
             onClick={save} disabled={saving}
