@@ -140,6 +140,7 @@ export default function CalendarPage({
                 >
                   <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: colorMap.get(r.id) }} />
                   <div>
+                    <p className="text-sm font-medium text-gray-800">{r.title || "제목 없음"}</p>
                     <p className="text-xs text-gray-400 mt-0.5">
                       {format(parseISO(r.id), "M월 d일")}
                       {r.endDate && ` – ${format(parseISO(r.endDate), "d일")}`}
