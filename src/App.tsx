@@ -11,13 +11,14 @@ import RecordPage from "./pages/RecordPage";
 import EquipmentPage from "./pages/EquipmentPage";
 import LedgerPage from "./pages/LedgerPage";
 import ProfilePage from "./pages/ProfilePage";
+import HomePage from "./pages/HomePage";
 
-export type Tab = "calendar" | "record" | "equipment" | "ledger" | "profile";
+export type Tab = "home" | "calendar" | "record" | "equipment" | "ledger" | "profile";
 
 export default function App() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const [tab, setTab] = useState<Tab>("calendar");
+  const [tab, setTab] = useState<Tab>("home");
   const [selectedRecordId, setSelectedRecordId] = useState<string | null>(null);
   const [selectedMemoDate, setSelectedMemoDate] = useState<string | null>(null);
 
@@ -79,6 +80,9 @@ export default function App() {
 
   return (
     <Shell tab={tab} setTab={setTab}>
+      {tab === "home" && (
+        <HomePage records={records} />
+      )}
       {tab === "calendar" && (
         <CalendarPage records={records} onSelectDate={openRecord} />
       )}
