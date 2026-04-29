@@ -1,5 +1,15 @@
 import { Tab } from "../App";
 
+function IconHome({ active }: { active: boolean }) {
+  const c = active ? "#3B6D11" : "#9ca3af";
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+      <polyline points="9 22 9 12 15 12 15 22"/>
+    </svg>
+  );
+}
+
 function IconCalendar({ active }: { active: boolean }) {
   const c = active ? "#3B6D11" : "#9ca3af";
   return (
@@ -54,6 +64,7 @@ function IconProfile({ active }: { active: boolean }) {
 }
 
 const tabs: { id: Tab; label: string; Icon: React.FC<{ active: boolean }> }[] = [
+  { id: "home",      label: "홈",     Icon: IconHome },
   { id: "calendar",  label: "캘린더", Icon: IconCalendar },
   { id: "record",    label: "기록",   Icon: IconRecord },
   { id: "equipment", label: "장비",   Icon: IconGear },
