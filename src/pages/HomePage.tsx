@@ -23,7 +23,7 @@ export default function HomePage({ records }: { records: CampingRecord[] }) {
   return (
     <div className="flex flex-col pb-8">
       <div className="px-5 pt-6 pb-4">
-        <h1 className="text-xl font-medium text-forest-800">포레스트 & 플로우 캠핑</h1>
+        <h1 className="text-xl font-medium text-forest-800">H A N G A R O U N D E R</h1>
       </div>
 
       {/* 총 횟수 */}
